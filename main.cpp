@@ -163,6 +163,8 @@ int main() {
         cout << "[" << i << "]" << vec.at(i) << " < ";
     }
 
+    system("pause");
+
     // Завершение программы.
     return 0;
 }
