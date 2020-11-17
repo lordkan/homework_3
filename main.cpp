@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <thread>
 #include <ctime>
@@ -19,12 +19,12 @@ int getSizeOfArray() {
         if (cin.fail() || a <= 1000) // если предыдущее извлечение оказалось неудачным,
         {
             cin.clear(); // то возвращаем cin в 'обычный' режим работы
-            cin.ignore(32767,'\n'); // и удаляем значения предыдущего ввода из входного буфера
+            cin.ignore(32767, '\n'); // и удаляем значения предыдущего ввода из входного буфера
             cout << "Oops, that input is invalid.  Please try again.\n";
         }
         else
         {
-            cin.ignore(32767,'\n'); // удаляем лишние значения
+            cin.ignore(32767, '\n'); // удаляем лишние значения
 
             return a;
         }
@@ -44,12 +44,12 @@ int getCountOfThreads(int len) {
         if (cin.fail() || a >= (len / 2) || a <= 0) // если предыдущее извлечение оказалось неудачным,
         {
             cin.clear(); // то возвращаем cin в 'обычный' режим работы
-            cin.ignore(32767,'\n'); // и удаляем значения предыдущего ввода из входного буфера
+            cin.ignore(32767, '\n'); // и удаляем значения предыдущего ввода из входного буфера
             cout << "Oops, that input is invalid.  Please try again.\n";
         }
         else
         {
-            cin.ignore(32767,'\n'); // удаляем лишние значения
+            cin.ignore(32767, '\n'); // удаляем лишние значения
 
             return a;
         }
@@ -57,7 +57,7 @@ int getCountOfThreads(int len) {
 }
 
 // Заполняет массив случайными целочисленными.
-void getRandomArray(vector<int> &vec, int length) {
+void getRandomArray(vector<int>& vec, int length) {
     srand(time(nullptr));
     for (int i = 0; i < length; ++i) {
         vec.at(i) = rand();
@@ -73,17 +73,17 @@ pair<int, int> searchSequence(vector<int> array, int maxIndex, int minIndex) {
     int buffer = 1, maxBuffer = 0, max = 0, maxElement = 0;
     for (int i = minIndex; i < maxIndex; i++)
     {
-        if (array.at(i+1) > array.at(i))
+        if (array.at(i + 1) > array.at(i))
         {
             buffer++;
             max = buffer;
-            if(maxBuffer < max)
+            if (maxBuffer < max)
             {
                 maxBuffer = max;
                 maxElement = i + 1;
             }
         }
-        if (array.at(i+1) <= array.at(i)) {
+        if (array.at(i + 1) <= array.at(i)) {
             max = buffer;
             if (maxBuffer < max) {
                 maxBuffer = max;
@@ -99,6 +99,7 @@ pair<int, int> searchSequence(vector<int> array, int maxIndex, int minIndex) {
 }
 
 int main() {
+    setlocale(LC_ALL, "Russian");
     // Создаем массив чисел.
     int len = getSizeOfArray();
     vector<int> vec(len, 0);
@@ -109,7 +110,7 @@ int main() {
 
     // Получаем кол-во потоков.
     int count = getCountOfThreads(len);
-    thread threads[count];
+    vector<thread> threads(count);
 
     // Делим массив на части. Каждый поток будет работать с отдельной частью.
     int temp = len / count;
@@ -123,16 +124,16 @@ int main() {
 
     // Вектор результатов выполнения функций в потоках.
     // (макс. индекс последовательности, длина последовательности)
-    vector< pair<int, int> > results(count, pair<int, int>(0,0));
+    vector< pair<int, int> > results(count, pair<int, int>(0, 0));
 
     // Поиск нужной последовательности многопоточонстью.
     for (int i = 0; i < count; ++i) {
-        threads[i] = thread(
-                [&results, vec, i, temp, bounds]()
-                { results.at(i) = searchSequence(vec, bounds.at(i) - 1, bounds.at(i) - temp); }
-                );
+        threads.at(i) = thread(
+            [&results, vec, i, temp, bounds]()
+            { results.at(i) = searchSequence(vec, bounds.at(i) - 1, bounds.at(i) - temp); }
+        );
     }
-    
+
     // Дожидаемся всех потоков.
     for (int i = 0; i < count; ++i) {
         threads[i].join();
